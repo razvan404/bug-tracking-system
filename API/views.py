@@ -162,3 +162,26 @@ class ReportBugView(APIView):
         bug = Bug(title=title, description=description, reporter=employee)
         bug.save()
         return Response({'msg': 'bug reported successfully'}, status=status.HTTP_201_CREATED)
+
+
+class UpdateBugView(APIView):
+    def patch(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'tester':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = UpdateBugSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+        bug_id = serializer.data.get('id')
+        title = serializer.data.get('title')
+        description = serializer.data.get('description')
+        queryset = Bug.objects.filter(id=bug_id)
+        if not queryset.exists():
+            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
+        bug = queryset[0]
+        bug.title = title
+        bug.description = description
+        bug.save(update_fields=['title', 'description'])
+        return Response({'msg': 'bug updated successfully'}, status=status.HTTP_200_OK)

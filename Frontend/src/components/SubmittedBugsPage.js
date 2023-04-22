@@ -6,9 +6,6 @@ import {
     ButtonGroup,
     Collapse,
     FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
     TextField,
     Typography,
 } from "@material-ui/core";
@@ -116,7 +113,34 @@ export default function SubmittedBugsPage() {
     }
 
     const handleBugUpdate = () => {
-        // TODO: handle bug update
+        if (selectedRow === null) {
+            setErrorMsg('Please select a bug to update');
+            return;
+        }
+        if (validateInput()) {
+            const requestOptions = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: selectedRow.id,
+                    title: title,
+                    description: description,
+                })
+            }
+            fetch('/api/update-bug', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setErrorMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadBugs();
+                        setSelectedRow(null);
+                    }
+                });
+        }
     }
 
     const handleBugRemove = () => {
