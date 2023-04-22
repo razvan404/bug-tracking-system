@@ -103,3 +103,21 @@ class UpdateEmployeeView(APIView):
         employee.type = employee_type
         employee.save(update_fields=['username', 'password', 'type'])
         return Response({'msg': 'account updated successfully'}, status=status.HTTP_200_OK)
+
+
+class DeleteEmployeeView(APIView):
+    def delete(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'administrator':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        employee_id = request.data.get('id')
+        if not employee_id:
+            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = Employee.objects.filter(id=employee_id)
+        if not queryset.exists():
+            return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
+        employee = queryset[0]
+        employee.delete()
+        return Response({'msg': 'account deleted successfully'}, status=status.HTTP_200_OK)

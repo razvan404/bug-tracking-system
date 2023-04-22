@@ -8,4 +8,5 @@ urlpatterns = [
     path('get-all-employees', GetAllEmployeesView.as_view()),
     path('create-employee', CreateEmployeeView.as_view()),
     path('update-employee', UpdateEmployeeView.as_view()),
+    path('delete-employee', DeleteEmployeeView.as_view()),
 ]

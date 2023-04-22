@@ -30,3 +30,11 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ('id', 'username', 'password', 'type')
+
+
+class DeleteEmployeeSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(validators=[])
+
+    class Meta:
+        model = Employee
+        fields = 'id'

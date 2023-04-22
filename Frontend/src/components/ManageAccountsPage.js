@@ -105,7 +105,26 @@ const ManageAccountsPage = () => {
   };
 
   const handleDeleteAccount = () => {
-    // TODO: implement delete account functionality
+      if (selectedRow !== null) {
+          const requestOptions = {
+              method: 'DELETE',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                  id: selectedRow.id
+              })
+          };
+          fetch('/api/delete-employee', requestOptions)
+              .then((response) => {
+                  if (!response.ok) {
+                      response.json().then((data) => setErrorMsg(data.error));
+                  }
+                  else {
+                      response.json().then((data) => setSuccessMsg(data.msg));
+                      loadEmployees();
+                      setSelectedRow(null);
+                  }
+              });
+      }
   };
 
 
