@@ -3,7 +3,7 @@ from django.db import models
 
 class AdministratorManager(models.Manager):
     def get_queryset(self):
-        return super(AdministratorManager, self).get_queryset().filter(type=EmployeeType.ADMINISTRATOR)
+        return super(AdministratorManager, self).get_queryset().filter(type='administrator')
 
     def create(self, **kwargs):
         kwargs.update({'type': 'admin'})
@@ -12,7 +12,7 @@ class AdministratorManager(models.Manager):
 
 class TesterManager(models.Manager):
     def get_queryset(self):
-        return super(TesterManager, self).get_queryset().filter(type='t')
+        return super(TesterManager, self).get_queryset().filter(type='tester')
 
     def create(self, **kwargs):
         kwargs.update({'type': 'tester'})
@@ -21,7 +21,7 @@ class TesterManager(models.Manager):
 
 class ProgrammerManager(models.Manager):
     def get_queryset(self):
-        return super(ProgrammerManager, self).get_queryset().filter(type='p')
+        return super(ProgrammerManager, self).get_queryset().filter(type='programmer')
 
     def create(self, **kwargs):
         kwargs.update({'type': 'programmer'})

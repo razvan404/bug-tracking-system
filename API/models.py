@@ -1,5 +1,4 @@
-from django.db import models
-from API.managers import AdministratorManager, TesterManager, ProgrammerManager
+from API.managers import *
 
 
 class Employee(models.Model):
@@ -33,3 +32,12 @@ class Programmer(Employee):
 
     class Meta:
         proxy = True
+
+
+class Bug(models.Model):
+    title = models.CharField(max_length=64, null=False)
+    description = models.CharField(max_length=64, null=False)
+    status = models.CharField(max_length=10, null=False, default='unassigned')
+    created_at = models.DateTimeField(auto_now_add=True)
+    reporter = models.ForeignKey(Tester, on_delete=models.SET_NULL, null=True, related_name='reported_bugs')
+    solver = models.ForeignKey(Programmer, on_delete=models.SET_NULL, null=True, related_name='bugs_to_solve')

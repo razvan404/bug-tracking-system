@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from API.models import Employee, EmployeeSession
+from API.models import Employee, EmployeeSession, Bug
 from API.serializers import EmployeeSerializer, LoginEmployeeSerializer, CreateEmployeeSerializer, \
-    UpdateEmployeeSerializer
+    UpdateEmployeeSerializer, BugSerializer
 
 
 class LoginEmployeeView(APIView):
@@ -121,3 +121,10 @@ class DeleteEmployeeView(APIView):
         employee = queryset[0]
         employee.delete()
         return Response({'msg': 'account deleted successfully'}, status=status.HTTP_200_OK)
+
+
+class GetAllBugsView(APIView):
+    def get(self, request):
+        queryset = Bug.objects.all()
+        serialized = BugSerializer(queryset, many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)

@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, List
 import { Dashboard, Settings, Help, ExitToApp } from '@material-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import ManageAccountsPage from './ManageAccountsPage';
+import BugsListPage from "./BugsListPage";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ function MainPage() {
       });
   }
 
+  const [mainComponent, setMainComponent] = useState(<BugsListPage />);
+
   return (
     <div className='mainRoot'>
       <AppBar className='mainAppBar'>
@@ -55,14 +58,14 @@ function MainPage() {
               <ListItemIcon>
                 <Dashboard />
               </ListItemIcon>
-              <ListItemText primary='Bugs List' />
+              <ListItemText primary='Bugs List' onClick={() => setMainComponent(<BugsListPage />)} />
             </ListItem>
             {employeeType === 'administrator' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Settings />
                   </ListItemIcon>
-                  <ListItemText primary='Manage Accounts' />
+                  <ListItemText primary='Manage Accounts' onClick={() => setMainComponent(<ManageAccountsPage />)} />
                 </ListItem> : null
             }
             {employeeType === 'tester' ?
@@ -94,7 +97,7 @@ function MainPage() {
       </Drawer>
       <main className='mainContent'>
         <Toolbar />
-        <ManageAccountsPage />
+          {mainComponent}
       </main>
     </div>
   );

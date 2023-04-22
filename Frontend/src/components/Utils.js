@@ -30,3 +30,33 @@ export const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
+
+import {
+    ContactSupport,
+    Pause,
+    DoneAll
+} from '@material-ui/icons';
+import {Chip} from "@material-ui/core";
+
+export const renderStatus = (status) => {
+    let color = 'default', label = 'Unknown', icon = <ContactSupport />;
+    switch (status) {
+    case 'unassigned':
+      label = 'Unassigned';
+      icon = <Pause />;
+      break;
+    case 'assigned':
+      color = 'secondary';
+      label = 'Assigned';
+      icon = <Search />;
+      break;
+    case 'fixed':
+      color = 'primary';
+      label = 'Fixed';
+      icon = <DoneAll />
+      break;
+    default:
+      break;
+    }
+    return <Chip label={label} color={color} icon={icon} />;
+}
