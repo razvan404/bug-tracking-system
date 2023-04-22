@@ -79,7 +79,29 @@ const ManageAccountsPage = () => {
   };
 
   const handleUpdateAccount = () => {
-    // TODO: implement update account functionality
+      if (validateInput() && selectedRow !== null) {
+            const requestOptions = {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    id: selectedRow.id,
+                    username: username,
+                    password: password,
+                    type: employeeType
+                })
+            };
+            fetch('/api/update-employee', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setErrorMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadEmployees();
+                        setSelectedRow(null);
+                    }
+                });
+      }
   };
 
   const handleDeleteAccount = () => {
