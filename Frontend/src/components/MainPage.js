@@ -4,6 +4,7 @@ import { Dashboard, Settings, Help, ExitToApp } from '@material-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import ManageAccountsPage from './ManageAccountsPage';
 import BugsListPage from "./BugsListPage";
+import SubmittedBugsPage from "./SubmittedBugsPage";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ function MainPage() {
                   <ListItemIcon>
                     <Help />
                   </ListItemIcon>
-                  <ListItemText primary='Submitted Bugs' />
+                  <ListItemText primary='Submitted Bugs' onClick={() => setMainComponent(<SubmittedBugsPage />)} />
                 </ListItem> : null
             }
             {employeeType === 'programmer' ?

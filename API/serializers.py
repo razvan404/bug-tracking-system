@@ -47,3 +47,9 @@ class BugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bug
         fields = ('id', 'title', 'description', 'status', 'created_at', 'reporter', 'solver')
+
+
+class ReportBugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bug
+        fields = ('title', 'description')

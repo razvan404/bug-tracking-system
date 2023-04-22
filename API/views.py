@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from API.models import Employee, EmployeeSession, Bug
+from API.models import Employee, EmployeeSession, Bug, Tester
 from API.serializers import EmployeeSerializer, LoginEmployeeSerializer, CreateEmployeeSerializer, \
     UpdateEmployeeSerializer, BugSerializer
 
@@ -128,3 +128,20 @@ class GetAllBugsView(APIView):
         queryset = Bug.objects.all()
         serialized = BugSerializer(queryset, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
+
+
+class GetTesterBugsView(APIView):
+    def get(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists():
+            return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
+        employee = queryset[0].employee
+        if employee.type != 'tester':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        bugs = employee.reported_bugs.all()
+        serialized = BugSerializer(bugs, many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+
