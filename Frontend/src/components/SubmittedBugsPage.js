@@ -145,6 +145,32 @@ export default function SubmittedBugsPage() {
 
     const handleBugRemove = () => {
         // TODO: handle bug remove
+        if (selectedRow === null) {
+            setErrorMsg('Please select a bug to remove');
+            return;
+        }
+        if (validateInput()) {
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: selectedRow.id,
+                })
+            }
+            fetch('/api/remove-bug', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setErrorMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadBugs();
+                        setSelectedRow(null);
+                    }
+                });
+        }
     }
 
     return ( <>

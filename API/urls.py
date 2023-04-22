@@ -13,4 +13,5 @@ urlpatterns = [
     path('get-tester-bugs', GetTesterBugsView.as_view()),
     path('report-bug', ReportBugView.as_view()),
     path('update-bug', UpdateBugView.as_view()),
+    path('remove-bug', RemoveBugView.as_view()),
 ]

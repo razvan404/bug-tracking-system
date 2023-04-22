@@ -185,3 +185,21 @@ class UpdateBugView(APIView):
         bug.description = description
         bug.save(update_fields=['title', 'description'])
         return Response({'msg': 'bug updated successfully'}, status=status.HTTP_200_OK)
+
+
+class RemoveBugView(APIView):
+    def delete(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'tester':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        bug_id = request.data.get('id')
+        if not bug_id:
+            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = Bug.objects.filter(id=bug_id)
+        if not queryset.exists():
+            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
+        bug = queryset[0]
+        bug.delete()
+        return Response({'msg': 'bug deleted successfully'}, status=status.HTTP_200_OK)

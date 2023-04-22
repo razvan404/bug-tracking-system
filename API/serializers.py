@@ -61,3 +61,11 @@ class UpdateBugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bug
         fields = ('id', 'title', 'description')
+
+
+class RemoveBugSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(validators=[])
+
+    class Meta:
+        model = Bug
+        fields = 'id'
