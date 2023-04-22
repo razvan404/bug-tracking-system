@@ -42,17 +42,17 @@ export const renderStatus = (status) => {
     let color = 'default', label = 'Unknown', icon = <ContactSupport />;
     switch (status) {
     case 'unassigned':
-      label = 'Unassigned';
+      label = 'unassigned';
       icon = <Pause />;
       break;
     case 'assigned':
       color = 'secondary';
-      label = 'Assigned';
+      label = 'assigned';
       icon = <Search />;
       break;
     case 'fixed':
       color = 'primary';
-      label = 'Fixed';
+      label = 'fixed';
       icon = <DoneAll />
       break;
     default:

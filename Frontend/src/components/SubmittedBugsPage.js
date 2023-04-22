@@ -88,7 +88,31 @@ export default function SubmittedBugsPage() {
     }
 
     const handleBugReport = () => {
-        // TODO: handle bug report
+        if (validateInput()) {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                })
+            }
+            fetch('/api/report-bug', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setErrorMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadBugs();
+                        setSelectedRow(null);
+                        setTitle('');
+                        setDescription('');
+                    }
+                });
+        }
     }
 
     const handleBugUpdate = () => {
@@ -108,14 +132,20 @@ export default function SubmittedBugsPage() {
               <TextField
                   label='Title'
                   value={title}
-                  onChange={(ev) => {setTitle(ev.target.value)}}
+                  onChange={(ev) => {
+                      setTitle(ev.target.value);
+                      setTitleError('');
+                  }}
                   error={titleError !== ''}
                   helperText={titleError}
               />
               <TextField
                   label='Description'
                   value={description}
-                  onChange={(ev) => {setDescription(ev.target.value)}}
+                  onChange={(ev) => {
+                      setDescription(ev.target.value);
+                      setDescriptionError('');
+                  }}
                   error={descriptionError !== ''}
                   helperText={descriptionError}
                   multiline

@@ -73,6 +73,10 @@ const ManageAccountsPage = () => {
                   else {
                       response.json().then((data) => setSuccessMsg(data.msg));
                       loadEmployees();
+                      setSelectedRow(null);
+                      setEmployeeType('');
+                      setUsername('');
+                      setPassword('');
                   }
               });
       }
