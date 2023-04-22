@@ -6,7 +6,7 @@ import ManageAccountsPage from './ManageAccountsPage';
 
 function MainPage() {
   const navigate = useNavigate();
-  const [employeeType, setEmployeeType] = useState('Programmer');
+  const [employeeType, setEmployeeType] = useState('');
 
   useEffect( () => {
     (async () => {
@@ -19,7 +19,6 @@ function MainPage() {
         })
         .then((data) => {
           setEmployeeType(data.type);
-          console.log(data.type);
         });
     })();
   }, []);
@@ -58,7 +57,7 @@ function MainPage() {
               </ListItemIcon>
               <ListItemText primary='Bugs List' />
             </ListItem>
-            {employeeType === 'Administrator' ?
+            {employeeType === 'administrator' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Settings />
@@ -66,7 +65,7 @@ function MainPage() {
                   <ListItemText primary='Manage Accounts' />
                 </ListItem> : null
             }
-            {employeeType === 'Tester' ?
+            {employeeType === 'tester' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Help />
@@ -74,7 +73,7 @@ function MainPage() {
                   <ListItemText primary='Submitted Bugs' />
                 </ListItem> : null
             }
-            {employeeType === 'Programmer' ?
+            {employeeType === 'programmer' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Help />

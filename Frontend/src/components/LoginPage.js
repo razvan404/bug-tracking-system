@@ -33,6 +33,7 @@ export default function LoginPage() {
       }
       return;
     }
+
     const requestOptions = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

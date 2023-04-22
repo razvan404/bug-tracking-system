@@ -23,7 +23,8 @@ class LoginEmployeeView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         employee = queryset[0]
-        EmployeeSession.objects.create(employee=employee, session=self.request.session.session_key)
+        employee_session = EmployeeSession(employee=employee, session=self.request.session.session_key)
+        employee_session.save()
         return Response({}, status=status.HTTP_200_OK)
 
 
@@ -59,9 +60,18 @@ class GetAllEmployeesView(APIView):
 
 
 class CreateEmployeeView(APIView):
-    def put(self, request):
+    def post(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'administrator':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = CreateEmployeeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response({}, status=status.HTTP_200_OK)
+        username = serializer.data.get('username')
+        password = serializer.data.get('password')
+        employee_type = serializer.data.get('type')
+        employee = Employee(username=username, password=password, type=employee_type)
+        employee.save()
+        return Response({'msg': 'account created successfully'}, status=status.HTTP_201_CREATED)

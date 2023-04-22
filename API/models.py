@@ -1,12 +1,11 @@
 from django.db import models
-
-from API.managers import EmployeeTypes, AdministratorManager, TesterManager, ProgrammerManager
+from API.managers import AdministratorManager, TesterManager, ProgrammerManager
 
 
 class Employee(models.Model):
     username = models.CharField(max_length=24, unique=True, null=False)
     password = models.CharField(max_length=24, null=False)
-    type = models.CharField(max_length=1, choices=EmployeeTypes.choices)
+    type = models.CharField(max_length=16)
 
 
 class EmployeeSession(models.Model):
