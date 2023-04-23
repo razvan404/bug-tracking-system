@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Dashboard, Settings, Help, ExitToApp } from '@material-ui/icons';
+import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon,  ListItemText } from '@material-ui/core';
+import { Dashboard, Settings, BugReport, Assignment, ExitToApp } from '@material-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import ManageAccountsPage from './ManageAccountsPage';
 import BugsListPage from "./BugsListPage";
 import SubmittedBugsPage from "./SubmittedBugsPage";
+import AssignedBugsPage from "./AssignedBugsPage";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -60,34 +61,34 @@ function MainPage() {
         <Toolbar />
         <div className='mainDrawerContainer'>
           <List>
-            <ListItem button>
+            <ListItem button onClick={() => setMainComponent(<BugsListPage />)}>
               <ListItemIcon>
                 <Dashboard />
               </ListItemIcon>
-              <ListItemText primary='Bugs List' onClick={() => setMainComponent(<BugsListPage />)} />
+              <ListItemText primary='Bugs List' />
             </ListItem>
             {employee && employee['type'] === 'administrator' ?
-                <ListItem button>
+                <ListItem button onClick={() => setMainComponent(<ManageAccountsPage />)}>
                   <ListItemIcon>
                     <Settings />
                   </ListItemIcon>
-                  <ListItemText primary='Manage Accounts' onClick={() => setMainComponent(<ManageAccountsPage />)} />
+                  <ListItemText primary='Manage Accounts' />
                 </ListItem> : null
             }
             {employee && employee['type'] === 'tester' ?
-                <ListItem button>
+                <ListItem button onClick={() => setMainComponent(<SubmittedBugsPage />)}>
                   <ListItemIcon>
-                    <Help />
+                    <BugReport />
                   </ListItemIcon>
-                  <ListItemText primary='Submitted Bugs' onClick={() => setMainComponent(<SubmittedBugsPage />)} />
+                  <ListItemText primary='Submitted Bugs'/>
                 </ListItem> : null
             }
             {employee && employee['type'] === 'programmer' ?
-                <ListItem button>
+                <ListItem button onClick={() => setMainComponent(<AssignedBugsPage />)}>
                   <ListItemIcon>
-                    <Help />
+                    <Assignment />
                   </ListItemIcon>
-                  <ListItemText primary='Your Tasks' />
+                  <ListItemText primary='Your Assignments' />
                 </ListItem> : null
             }
           </List>

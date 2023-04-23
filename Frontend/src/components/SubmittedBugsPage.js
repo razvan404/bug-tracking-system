@@ -145,7 +145,6 @@ export default function SubmittedBugsPage() {
     }
 
     const handleBugRemove = () => {
-        // TODO: handle bug remove
         if (selectedRow === null) {
             setErrorMsg('Please select a bug to remove');
             return;

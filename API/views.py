@@ -237,3 +237,16 @@ class AssignBugView(APIView):
         bug.solver = programmer
         bug.save(update_fields=['status', 'solver'])
         return Response({'msg': 'bug assigned successfully'}, status=status.HTTP_200_OK)
+
+
+class GetProgrammerBugsView(APIView):
+    def get(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'programmer':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        programmer = queryset[0].employee
+        bugs = programmer.bugs_to_solve.all()
+        serialized = BugSerializer(bugs, many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)

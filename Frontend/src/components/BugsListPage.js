@@ -84,10 +84,10 @@ export default function BugsListPage() {
         })
             .then((response) => {
                 if (response.ok) {
-                    setSuccessMsg('Bug assigned successfully');
+                    response.json().then((data) => setSuccessMsg(data.msg));
                     loadBugs();
                 } else {
-                    setErrorMsg('Error assigning bug');
+                    response.json().then((data) => setErrorMsg(data.error));
                 }
             });
     }
