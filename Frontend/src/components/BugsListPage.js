@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from "material-table";
 import { renderStatus, tableIcons } from "./Utils";
-import {Button, Card, CardContent, Typography} from "@material-ui/core";
+import {Button, Card, CardContent, Collapse, Typography} from "@material-ui/core";
+import {Alert} from "@material-ui/lab";
 
 export default function BugsListPage() {
     const [bugs, setBugs] = useState([]);
@@ -23,6 +24,7 @@ export default function BugsListPage() {
         fetch('/api/get-all-bugs')
             .then((response) => response.json())
             .then((data) => {
+                console.log('Value:', data[2].solver);
                 setBugs(data);
             });
     }
@@ -40,7 +42,8 @@ export default function BugsListPage() {
             {title: 'Status', field: 'status', render: rowData => renderStatus(rowData.status) },
             {title: 'Created at', field: 'created_at', hidden: true},
             {title: 'Reporter', field: 'reporter'},
-            {title: 'Solver', field: 'solver', render: rowData => rowData.solver === '' ? rowData.solver : 'Not assigned yet'}
+            {title: 'Solver', field: 'solver', render: rowData => typeof rowData.solver === 'undefined' ?
+                    'not assigned yet' : rowData.solver}
         ];
 
         return (
@@ -65,12 +68,45 @@ export default function BugsListPage() {
         );
     }
 
+
+    const [successMsg, setSuccessMsg] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleAssignBug = () => {
+        fetch('/api/assign-bug', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: selectedRow.id
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setSuccessMsg('Bug assigned successfully');
+                    loadBugs();
+                } else {
+                    setErrorMsg('Error assigning bug');
+                }
+            });
+    }
+
     return (
       <>
         <Typography variant="h4">
             Bugs List
         </Typography>
         {getBugsTable()}
+          <Collapse in={successMsg !== '' || errorMsg !== ''}>
+             <Alert severity={successMsg !== '' ? 'success' : 'error'} onClose={ () => {
+                setErrorMsg('');
+                setSuccessMsg('');
+                }}>
+                {successMsg !== '' ? successMsg : errorMsg}
+            </Alert>
+          </Collapse>
+        <Collapse in={selectedRow !== null}>
           <Card align='center'>
               <CardContent>
                   <Typography variant='h5' component='h5'>
@@ -82,29 +118,28 @@ export default function BugsListPage() {
                   </Typography>
                       : <>
                           <Typography variant='body1' component='p'>
-                              Title: {selectedRow.title}
+                              Title: {selectedRow['title']}
                           </Typography>
                           <Typography variant='body2' component='p'>
-                              Description: {selectedRow.description}
+                              Description: {selectedRow['description']}
                           </Typography>
                           <Typography variant='body2' component='p'>
-                              Status: {selectedRow.status}
+                              Status: {selectedRow['status']}
                           </Typography>
                           <Typography variant='body2' component='p'>
-                              Created at: {selectedRow.created_at}
+                              Created at: {selectedRow['created_at']}
                           </Typography>
                           <Typography variant='body2' component='p'>
-                              Reporter: {selectedRow.reporter}
+                              Reporter: {selectedRow['reporter']}
                           </Typography>
                           <Typography variant='body2' component='p'>
-                              Solver: {selectedRow.solver === '' ? selectedRow.solver : 'Not assigned yet'}
+                              Solver: {typeof selectedRow.solver === 'undefined' ?
+                                       'not assigned yet' : selectedRow.solver }
                           </Typography>
                           <Button
                               variant={'contained'}
                               color={'primary'}
-                              onClick={() => {
-                                  return true;
-                              }}
+                              onClick={handleAssignBug}
                               disabled={employeeType !== 'programmer' || selectedRow.status !== 'unassigned'}
                           >
                               Assign this bug
@@ -113,6 +148,7 @@ export default function BugsListPage() {
                   }
               </CardContent>
           </Card>
+        </Collapse>
       </>
     );
 }

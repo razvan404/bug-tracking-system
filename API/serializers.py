@@ -69,3 +69,11 @@ class RemoveBugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bug
         fields = 'id'
+
+
+class AssignBugSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(validators=[])
+
+    class Meta:
+        model = Bug
+        fields = ['id']
