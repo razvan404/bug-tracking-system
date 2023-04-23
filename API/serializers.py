@@ -32,21 +32,18 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'password', 'type')
 
 
-class DeleteEmployeeSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(validators=[])
-
-    class Meta:
-        model = Employee
-        fields = 'id'
-
-
 class BugSerializer(serializers.ModelSerializer):
     reporter = serializers.CharField(source='reporter.username', read_only=True)
-    solver = serializers.CharField(source='solver.username', read_only=True)
+    solver = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Bug
         fields = ('id', 'title', 'description', 'status', 'created_at', 'reporter', 'solver')
+
+    @staticmethod
+    def get_solver(obj):
+        return obj.solved_by.username if obj.status == 'fixed' \
+            else obj.assigned_to.username if obj.assigned_to else None
 
 
 class ReportBugSerializer(serializers.ModelSerializer):
@@ -61,19 +58,3 @@ class UpdateBugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bug
         fields = ('id', 'title', 'description')
-
-
-class RemoveBugSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(validators=[])
-
-    class Meta:
-        model = Bug
-        fields = 'id'
-
-
-class AssignBugSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(validators=[])
-
-    class Meta:
-        model = Bug
-        fields = ['id']

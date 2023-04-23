@@ -41,5 +41,7 @@ class Bug(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     reporter = models.ForeignKey(Tester, on_delete=models.SET_NULL, null=True,
                                  related_name='reported_bugs')
-    solver = models.ForeignKey(Programmer, on_delete=models.SET_NULL, null=True,
-                               related_name='bugs_to_solve', default=None)
+    assigned_to = models.ForeignKey(Programmer, on_delete=models.SET_NULL, null=True,
+                                    related_name='bugs_to_solve', default=None)
+    solved_by = models.ForeignKey(Programmer, on_delete=models.SET_NULL, null=True,
+                                  related_name='solved_bugs', default=None)

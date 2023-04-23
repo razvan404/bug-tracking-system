@@ -42,8 +42,7 @@ export default function SubmittedBugsPage() {
             {title: 'Status', field: 'status', render: rowData => renderStatus(rowData.status) },
             {title: 'Created at', field: 'created_at', hidden: true},
             {title: 'Reporter', field: 'reporter', hidden: true},
-            {title: 'Solver', field: 'solver', render: rowData => typeof rowData.solver === 'undefined' ?
-                    'not assigned yet' : rowData.solver}
+            {title: 'Solver', field: 'solver'}
         ];
 
         return (

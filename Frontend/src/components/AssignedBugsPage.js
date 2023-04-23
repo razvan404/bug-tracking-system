@@ -55,12 +55,32 @@ export default function AssignedBugsPage() {
         );
     }
 
-    const handleBugFixed = () => {
-        // TODO: handle bug fixed
+    const handleMarkBugAsFixed = () => {
+        if (selectedRow !== null) {
+            const requestOptions = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: selectedRow.id
+                    })
+                }
+            fetch('/api/mark-bug-as-fixed', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setSuccessMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadBugs();
+                    }
+                });
+        }
     }
 
-    const handleBugUnassign = () => {
-        // TODO: handle bug unassign
+    const handleMarkBugAsUnassigned = () => {
+        // TODO: handle mark bug as unassigned
     }
 
     return ( <>
@@ -72,14 +92,14 @@ export default function AssignedBugsPage() {
               <Button
                   variant='contained'
                   color='primary'
-                  onClick={handleBugFixed}
+                  onClick={handleMarkBugAsFixed}
                   disabled={selectedRow === null}>
                 Mark Bug as Fixed
               </Button>
               <Button
                   variant='contained'
                   color='secondary'
-                  onClick={handleBugUnassign}
+                  onClick={handleMarkBugAsUnassigned}
                   disabled={selectedRow === null}
               >
                 Mark Bug as Unassigned

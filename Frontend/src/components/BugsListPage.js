@@ -24,7 +24,6 @@ export default function BugsListPage() {
         fetch('/api/get-all-bugs')
             .then((response) => response.json())
             .then((data) => {
-                console.log('Value:', data[2].solver);
                 setBugs(data);
             });
     }
@@ -42,8 +41,7 @@ export default function BugsListPage() {
             {title: 'Status', field: 'status', render: rowData => renderStatus(rowData.status) },
             {title: 'Created at', field: 'created_at', hidden: true},
             {title: 'Reporter', field: 'reporter'},
-            {title: 'Solver', field: 'solver', render: rowData => typeof rowData.solver === 'undefined' ?
-                    'not assigned yet' : rowData.solver}
+            {title: 'Solver', field: 'solver'}
         ];
 
         return (
@@ -132,10 +130,9 @@ export default function BugsListPage() {
                           <Typography variant='body2' component='p'>
                               Reporter: {selectedRow['reporter']}
                           </Typography>
-                          <Typography variant='body2' component='p'>
-                              Solver: {typeof selectedRow.solver === 'undefined' ?
-                                       'not assigned yet' : selectedRow.solver }
-                          </Typography>
+                          {selectedRow.solver !== null
+                              ? <Typography variant='body2' component='p'>Solver: {selectedRow.solver}</Typography>
+                              : null}
                           <Button
                               variant={'contained'}
                               color={'primary'}
