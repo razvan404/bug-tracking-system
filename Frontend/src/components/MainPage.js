@@ -8,7 +8,7 @@ import SubmittedBugsPage from "./SubmittedBugsPage";
 
 function MainPage() {
   const navigate = useNavigate();
-  const [employeeType, setEmployeeType] = useState('');
+  const [employee, setEmployee] = useState(null);
 
   useEffect( () => {
     (async () => {
@@ -20,7 +20,7 @@ function MainPage() {
           return response.json();
         })
         .then((data) => {
-          setEmployeeType(data.type);
+          setEmployee(data);
         });
     })();
   }, []);
@@ -39,10 +39,15 @@ function MainPage() {
   return (
     <div className='mainRoot'>
       <AppBar className='mainAppBar'>
-        <Toolbar>
-          <Typography variant='h6' noWrap>
+        <Toolbar className='flex-container unselectable'>
+          <Typography variant='h6' className='occupy-space' unselectable='on'>
             Bug Tracking System
           </Typography>
+            {employee ?
+                <Typography variant='body1' unselectable='on'>
+                    logged as <strong>{ employee['username'] }</strong>
+                </Typography> : null
+            }
         </Toolbar>
       </AppBar>
       <Drawer
@@ -61,7 +66,7 @@ function MainPage() {
               </ListItemIcon>
               <ListItemText primary='Bugs List' onClick={() => setMainComponent(<BugsListPage />)} />
             </ListItem>
-            {employeeType === 'administrator' ?
+            {employee && employee['type'] === 'administrator' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Settings />
@@ -69,7 +74,7 @@ function MainPage() {
                   <ListItemText primary='Manage Accounts' onClick={() => setMainComponent(<ManageAccountsPage />)} />
                 </ListItem> : null
             }
-            {employeeType === 'tester' ?
+            {employee && employee['type'] === 'tester' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Help />
@@ -77,7 +82,7 @@ function MainPage() {
                   <ListItemText primary='Submitted Bugs' onClick={() => setMainComponent(<SubmittedBugsPage />)} />
                 </ListItem> : null
             }
-            {employeeType === 'programmer' ?
+            {employee && employee['type'] === 'programmer' ?
                 <ListItem button>
                   <ListItemIcon>
                     <Help />

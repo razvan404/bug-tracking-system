@@ -42,7 +42,8 @@ export default function SubmittedBugsPage() {
             {title: 'Status', field: 'status', render: rowData => renderStatus(rowData.status) },
             {title: 'Created at', field: 'created_at', hidden: true},
             {title: 'Reporter', field: 'reporter', hidden: true},
-            {title: 'Solver', field: 'solver', render: rowData => rowData.solver === '' ? rowData.solver : 'Not assigned yet'}
+            {title: 'Solver', field: 'solver', render: rowData => typeof rowData.solver === 'undefined' ?
+                    'not assigned yet' : rowData.solver}
         ];
 
         return (
@@ -203,7 +204,7 @@ export default function SubmittedBugsPage() {
               />
             </FormControl>
 
-            <ButtonGroup fullWidth style={{gap: 20}}>
+            <ButtonGroup fullWidth className='gap-20'>
               <Button
                   variant="contained"
                   color="primary"

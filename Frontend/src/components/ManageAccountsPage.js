@@ -221,7 +221,7 @@ const ManageAccountsPage = () => {
           />
         </FormControl>
 
-        <ButtonGroup fullWidth style={{gap: 20}}>
+        <ButtonGroup fullWidth className='gap-20'>
           <Button
               variant="contained"
               color="primary"

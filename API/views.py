@@ -144,7 +144,7 @@ class GetTesterBugsView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].type != 'tester':
+        if not queryset.exists() or queryset[0].employee.type != 'tester':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         tester = queryset[0].employee
         bugs = tester.reported_bugs.all()
@@ -157,7 +157,7 @@ class ReportBugView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'tester':
+        if not queryset.exists() or queryset[0].employee.employee.type != 'tester':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         tester = queryset[0].employee
         serializer = ReportBugSerializer(data=request.data)

@@ -3,6 +3,30 @@ body {
   margin: 0;
 }
 
+.unselectable {
+  user-select: none;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.occupy-space {
+    flex: 1;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
 /* Login Page */
 
 .loginRoot {
