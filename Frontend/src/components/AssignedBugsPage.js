@@ -81,6 +81,27 @@ export default function AssignedBugsPage() {
 
     const handleMarkBugAsUnassigned = () => {
         // TODO: handle mark bug as unassigned
+        if (selectedRow !== null) {
+            const requestOptions = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: selectedRow.id
+                })
+            }
+            fetch('/api/mark-bug-as-unassigned', requestOptions)
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((data) => setSuccessMsg(data.error));
+                    }
+                    else {
+                        response.json().then((data) => setSuccessMsg(data.msg));
+                        loadBugs();
+                    }
+                });
+        }
     }
 
     return ( <>

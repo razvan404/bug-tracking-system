@@ -271,3 +271,24 @@ class MarkBugAsFixedView(APIView):
         bug.solved_by = programmer
         bug.save(update_fields=['status', 'assigned_to', 'solved_by'])
         return Response({'msg': 'bug marked as fixed successfully'}, status=status.HTTP_200_OK)
+
+
+class MarkBugAsUnassignedView(APIView):
+    def patch(self, request):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
+        if not queryset.exists() or queryset[0].employee.type != 'programmer':
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        programmer = queryset[0].employee
+        bug_id = request.data.get('id')
+        if not bug_id:
+            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = programmer.bugs_to_solve.filter(id=bug_id)
+        if not queryset.exists():
+            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
+        bug = queryset[0]
+        bug.status = 'unassigned'
+        bug.assigned_to = None
+        bug.save(update_fields=['status', 'assigned_to'])
+        return Response({'msg': 'bug marked as unassigned successfully'}, status=status.HTTP_200_OK)
