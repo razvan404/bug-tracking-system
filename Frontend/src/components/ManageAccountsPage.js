@@ -12,7 +12,7 @@ import MaterialTable from 'material-table';
 import { tableIcons } from "./Utils";
 import { Alert } from "@material-ui/lab";
 
-const ManageAccountsPage = () => {
+export default function ManageAccountsPage() {
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState('');
 
@@ -180,14 +180,13 @@ const ManageAccountsPage = () => {
               options={{
                 rowStyle: (rowData) => ({
                     backgroundColor: selectedRow === rowData ? "#5972FF" : "#FFF",
-              })
-              }}
+              })}}
           />
     );
   }
 
   return (
-      <div>
+      <>
         <Typography variant="h4">
           Manage Accounts
         </Typography>
@@ -253,13 +252,7 @@ const ManageAccountsPage = () => {
                 {successMsg !== '' ? successMsg : errorMsg}
             </Alert>
         </Collapse>
-
-        <div>
-          {getEmployeesTable()}
-        </div>
-
-      </div>
+        {getEmployeesTable()}
+      </>
   );
 };
-
-export default ManageAccountsPage;

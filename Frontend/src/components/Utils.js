@@ -9,7 +9,7 @@ import {
     FirstPage, LastPage, Remove,
     SaveAlt, Search, ViewColumn
 } from '@material-ui/icons';
-import React, {forwardRef} from 'react';
+import React, { forwardRef } from 'react';
 
 export const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),

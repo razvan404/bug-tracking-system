@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Paper, Typography, TextField, Button, FormGroup, Collapse } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');

@@ -9,7 +9,6 @@ from API.serializers import *
 class LoginEmployeeView(APIView):
     def post(self, request):
         serializer = LoginEmployeeSerializer(data=request.data)
-        print(serializer)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,7 +88,6 @@ class UpdateEmployeeView(APIView):
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
         if not queryset.exists() or queryset[0].employee.type != 'administrator':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        print(request.data)
         serializer = UpdateEmployeeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -97,7 +95,6 @@ class UpdateEmployeeView(APIView):
         username = serializer.data.get('username')
         password = serializer.data.get('password')
         employee_type = serializer.data.get('type')
-        print(serializer.data)
         queryset = Employee.objects.filter(id=employee_id)
         if not queryset.exists():
             return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)

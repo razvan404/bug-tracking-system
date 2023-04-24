@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from "material-table";
 import { renderStatus, tableIcons } from "./Utils";
-import {Button, Card, CardContent, Collapse, Typography} from "@material-ui/core";
-import {Alert} from "@material-ui/lab";
+import { Button, Card, CardContent, Collapse, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 export default function BugsListPage() {
     const [bugs, setBugs] = useState([]);

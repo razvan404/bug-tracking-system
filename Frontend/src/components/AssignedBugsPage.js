@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {renderStatus, tableIcons} from "./Utils";
+import React, { useEffect, useState } from 'react';
+import { tableIcons } from "./Utils";
 import MaterialTable from "material-table";
-import {Button, ButtonGroup, Collapse, FormControl, TextField, Typography} from "@material-ui/core";
-import {Alert} from "@material-ui/lab";
+import { Button, ButtonGroup, Collapse, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 export default function AssignedBugsPage() {
     const [successMsg, setSuccessMsg] = useState('');
@@ -80,7 +80,6 @@ export default function AssignedBugsPage() {
     }
 
     const handleMarkBugAsUnassigned = () => {
-        // TODO: handle mark bug as unassigned
         if (selectedRow !== null) {
             const requestOptions = {
                 method: 'PATCH',

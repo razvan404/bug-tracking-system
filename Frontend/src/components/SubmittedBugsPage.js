@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {renderStatus, tableIcons} from "./Utils";
+import React, { useEffect, useState } from 'react';
+import { renderStatus, tableIcons } from "./Utils";
 import MaterialTable from "material-table";
 import {
     Button,
@@ -234,9 +234,7 @@ export default function SubmittedBugsPage() {
                     {successMsg !== '' ? successMsg : errorMsg}
                 </Alert>
             </Collapse>
-            <div>
-                {getBugsTable()}
-            </div>
+            {getBugsTable()}
         </>
     );
 }

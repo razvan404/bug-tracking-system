@@ -7,7 +7,7 @@ import BugsListPage from "./BugsListPage";
 import SubmittedBugsPage from "./SubmittedBugsPage";
 import AssignedBugsPage from "./AssignedBugsPage";
 
-function MainPage() {
+export default function MainPage() {
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
 
@@ -109,5 +109,3 @@ function MainPage() {
     </div>
   );
 }
-
-export default MainPage;
