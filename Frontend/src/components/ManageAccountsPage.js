@@ -28,7 +28,7 @@ export default function ManageAccountsPage() {
 
   const [employees, setEmployees] = useState([]);
   const loadEmployees = () => {
-    fetch('/api/get-all-employees')
+    fetch('/api/admin-employees')
       .then((response) => response.json())
       .then((data) => {
         setEmployees(data);
@@ -65,7 +65,7 @@ export default function ManageAccountsPage() {
                   type: employeeType
               })
           };
-          fetch('/api/create-employee', requestOptions)
+          fetch('/api/admin-employees', requestOptions)
               .then((response) => {
                   if (!response.ok) {
                       response.json().then((data) => setErrorMsg(data.error));
@@ -85,16 +85,15 @@ export default function ManageAccountsPage() {
   const handleUpdateAccount = () => {
       if (validateInput() && selectedRow !== null) {
             const requestOptions = {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    id: selectedRow.id,
                     username: username,
                     password: password,
                     type: employeeType
                 })
             };
-            fetch('/api/update-employee', requestOptions)
+            fetch(`/api/admin-employees/${selectedRow.id}`, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setErrorMsg(data.error));
@@ -113,11 +112,8 @@ export default function ManageAccountsPage() {
           const requestOptions = {
               method: 'DELETE',
               headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({
-                  id: selectedRow.id
-              })
           };
-          fetch('/api/delete-employee', requestOptions)
+          fetch(`/api/admin-employees/${selectedRow.id}`, requestOptions)
               .then((response) => {
                   if (!response.ok) {
                       response.json().then((data) => setErrorMsg(data.error));

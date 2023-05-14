@@ -10,10 +10,11 @@ import AssignedBugsPage from "./AssignedBugsPage";
 export default function MainPage() {
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
+  const [mainComponent, setMainComponent] = useState(null);
 
   useEffect( () => {
     (async () => {
-      await fetch('/api/get-employee')
+      await fetch('/api/employee-credentials')
         .then((response) => {
           if (!response.ok) {
             navigate('/login', {replace: true});
@@ -22,20 +23,19 @@ export default function MainPage() {
         })
         .then((data) => {
           setEmployee(data);
+          setMainComponent(<BugsListPage employee={data} />)
         });
     })();
   }, []);
 
   const handleLogout = () => {
-    fetch('/api/logout-employee', { method: 'DELETE' })
+    fetch('/api/employee-credentials', { method: 'DELETE' })
       .then((response) => {
         if (response.ok) {
           navigate('/login', {replace: true});
         }
       });
   }
-
-  const [mainComponent, setMainComponent] = useState(<BugsListPage />);
 
   return (
     <div className='mainRoot'>
@@ -61,12 +61,13 @@ export default function MainPage() {
         <Toolbar />
         <div className='mainDrawerContainer'>
           <List>
-            <ListItem button onClick={() => setMainComponent(<BugsListPage />)}>
-              <ListItemIcon>
-                <Dashboard />
-              </ListItemIcon>
-              <ListItemText primary='Bugs List' />
-            </ListItem>
+             {employee ?
+                 <ListItem button onClick={() => setMainComponent(<BugsListPage employee={employee} />)}>
+                     <ListItemIcon>
+                         <Dashboard />
+                     </ListItemIcon>
+                     <ListItemText primary='Bugs List' />
+                 </ListItem> : null}
             {employee && employee['type'] === 'administrator' ?
                 <ListItem button onClick={() => setMainComponent(<ManageAccountsPage />)}>
                   <ListItemIcon>

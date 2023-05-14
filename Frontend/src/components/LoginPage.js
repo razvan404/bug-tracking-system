@@ -13,7 +13,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   useEffect( () => {
     (async () => {
-      await fetch('/api/get-employee')
+      await fetch('/api/employee-credentials')
         .then((response) => {
           if (response.ok) {
             navigate('/', {replace: true});
@@ -43,7 +43,7 @@ export default function LoginPage() {
         })
     }
 
-    fetch('/api/login-employee', requestOptions)
+    fetch('/api/employee-credentials', requestOptions)
       .then((response) => {
         if (!response.ok) {
           setError('Invalid credentials');

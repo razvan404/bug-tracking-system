@@ -22,7 +22,7 @@ export default function SubmittedBugsPage() {
 
     const [bugs, setBugs] = useState([]);
     const loadBugs = () => {
-        fetch('/api/get-tester-bugs')
+        fetch('/api/tester-bugs')
             .then((response) => response.json())
             .then((data) => {
                 setBugs(data);
@@ -96,7 +96,7 @@ export default function SubmittedBugsPage() {
                     description: description,
                 })
             }
-            fetch('/api/report-bug', requestOptions)
+            fetch('/api/tester-bugs', requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setErrorMsg(data.error));
@@ -124,12 +124,11 @@ export default function SubmittedBugsPage() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: selectedRow.id,
                     title: title,
                     description: description,
                 })
             }
-            fetch('/api/update-bug', requestOptions)
+            fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setErrorMsg(data.error));
@@ -153,12 +152,9 @@ export default function SubmittedBugsPage() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: selectedRow.id,
-                })
+                }
             }
-            fetch('/api/remove-bug', requestOptions)
+            fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setErrorMsg(data.error));

@@ -4,127 +4,114 @@ from rest_framework.views import APIView
 
 from API.models import EmployeeSession
 from API.serializers import *
+from API.service import Service, UnauthorizedException, NotFoundException
 
 
-class LoginEmployeeView(APIView):
+class EmployeeCredentialsView(APIView):
     def post(self, request):
+        # Login
         serializer = LoginEmployeeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
         username = serializer.data.get('username')
         password = serializer.data.get('password')
-        queryset = Employee.objects.filter(username=username, password=password)
-
-        if not queryset.exists():
+        try:
+            employee = Service.find_employee(username=username, password=password)
+            if not self.request.session.exists(self.request.session.session_key):
+                self.request.session.create()
+            Service.create_session(employee=employee, session=self.request.session.session_key)
+            return Response({}, status=status.HTTP_200_OK)
+        except NotFoundException:
             return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
-        employee = queryset[0]
-        employee_session = EmployeeSession(employee=employee, session=self.request.session.session_key)
-        employee_session.save()
-        return Response({}, status=status.HTTP_200_OK)
-
-
-class GetEmployeeView(APIView):
     def get(self, request):
+        # Find by session
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists():
+        try:
+            employee = Service.find_employee(session=self.request.session.session_key)
+            serialized = EmployeeSerializer(employee)
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        except NotFoundException:
             return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
-        employee = queryset[0].employee
-        serialized = EmployeeSerializer(employee)
-        return Response(serialized.data, status=status.HTTP_200_OK)
 
-
-class LogoutEmployeeView(APIView):
     def delete(self, request):
+        # Logout
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists():
+        try:
+            Service.delete_session(session=self.request.session.session_key)
+            return Response({}, status=status.HTTP_200_OK)
+        except NotFoundException:
             return Response({'error': 'employee not logged in'}, status=status.HTTP_404_NOT_FOUND)
-        employee_session = queryset[0]
-        employee_session.delete()
-        return Response({}, status=status.HTTP_200_OK)
 
 
-class GetAllEmployeesView(APIView):
+class AdminEmployeesView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'administrator':
+        try:
+            employees = Service.find_all_employees(session=self.request.session.session_key)
+            serialized = EmployeeSerializer(employees, many=True)
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        except UnauthorizedException:
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        queryset = Employee.objects.all()
-        serialized = EmployeeSerializer(queryset, many=True)
-        return Response(serialized.data, status=status.HTTP_200_OK)
 
-
-class CreateEmployeeView(APIView):
+        # Create Employee
     def post(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'administrator':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = CreateEmployeeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         username = serializer.data.get('username')
         password = serializer.data.get('password')
         employee_type = serializer.data.get('type')
-        employee = Employee(username=username, password=password, type=employee_type)
-        employee.save()
-        return Response({'msg': 'account created successfully'}, status=status.HTTP_201_CREATED)
 
+        try:
+            Service.create_employee(session=self.request.session.session_key, employee_username=username,
+                                    employee_password=password, employee_type=employee_type)
+            return Response({'msg': 'account created successfully'}, status=status.HTTP_201_CREATED)
+        except UnauthorizedException:
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
-class UpdateEmployeeView(APIView):
-    def patch(self, request):
+    # Update Employee
+    def put(self, request, employee_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'administrator':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = UpdateEmployeeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-        employee_id = serializer.data.get('id')
         username = serializer.data.get('username')
         password = serializer.data.get('password')
         employee_type = serializer.data.get('type')
-        queryset = Employee.objects.filter(id=employee_id)
-        if not queryset.exists():
+
+        try:
+            Service.update_employee(session=self.request.session.session_key, employee_id=employee_id,
+                                    employee_username=username, employee_password=password,
+                                    employee_type=employee_type)
+            return Response({'msg': 'account updated successfully'}, status=status.HTTP_200_OK)
+        except UnauthorizedException:
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        except NotFoundException:
             return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
-        employee = queryset[0]
-        employee.username = username
-        employee.password = password
-        employee.type = employee_type
-        employee.save(update_fields=['username', 'password', 'type'])
-        return Response({'msg': 'account updated successfully'}, status=status.HTTP_200_OK)
 
-
-class DeleteEmployeeView(APIView):
-    def delete(self, request):
+    def delete(self, request, employee_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'administrator':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        employee_id = request.data.get('id')
         if not employee_id:
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-        queryset = Employee.objects.filter(id=employee_id)
-        if not queryset.exists():
+        try:
+            Service.delete_employee(session=self.request.session.session_key, employee_id=employee_id)
+            return Response({'msg': 'account deleted successfully'}, status=status.HTTP_200_OK)
+        except UnauthorizedException:
+            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        except NotFoundException:
             return Response({'error': 'employee not found'}, status=status.HTTP_404_NOT_FOUND)
-        employee = queryset[0]
-        employee.delete()
-        return Response({'msg': 'account deleted successfully'}, status=status.HTTP_200_OK)
 
 
-class GetAllBugsView(APIView):
+class BugsView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
@@ -136,7 +123,7 @@ class GetAllBugsView(APIView):
         return Response(serialized.data, status=status.HTTP_200_OK)
 
 
-class GetTesterBugsView(APIView):
+class TesterBugsView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
@@ -148,16 +135,14 @@ class GetTesterBugsView(APIView):
         serialized = BugSerializer(bugs, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
 
-
-class ReportBugView(APIView):
     def post(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.employee.type != 'tester':
+        if not queryset.exists() or queryset[0].employee.type != 'tester':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         tester = queryset[0].employee
-        serializer = ReportBugSerializer(data=request.data)
+        serializer = BugDetailsSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         title = serializer.data.get('title')
@@ -166,18 +151,15 @@ class ReportBugView(APIView):
         bug.save()
         return Response({'msg': 'bug reported successfully'}, status=status.HTTP_201_CREATED)
 
-
-class UpdateBugView(APIView):
-    def patch(self, request):
+    def patch(self, request, bug_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
         if not queryset.exists() or queryset[0].employee.type != 'tester':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        serializer = UpdateBugSerializer(data=request.data)
+        serializer = BugDetailsSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-        bug_id = serializer.data.get('id')
         title = serializer.data.get('title')
         description = serializer.data.get('description')
         queryset = Bug.objects.filter(id=bug_id)
@@ -191,17 +173,12 @@ class UpdateBugView(APIView):
         bug.save(update_fields=['title', 'description'])
         return Response({'msg': 'bug updated successfully'}, status=status.HTTP_200_OK)
 
-
-class RemoveBugView(APIView):
-    def delete(self, request):
+    def delete(self, request, bug_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
         if not queryset.exists() or queryset[0].employee.type != 'tester':
             return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        bug_id = request.data.get('id')
-        if not bug_id:
-            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         queryset = Bug.objects.filter(id=bug_id)
         if not queryset.exists():
             return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)

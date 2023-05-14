@@ -24,12 +24,11 @@ class CreateEmployeeSerializer(serializers.ModelSerializer):
 
 
 class UpdateEmployeeSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(validators=[])
     username = serializers.CharField(validators=[])
 
     class Meta:
         model = Employee
-        fields = ('id', 'username', 'password', 'type')
+        fields = ('username', 'password', 'type')
 
 
 class BugSerializer(serializers.ModelSerializer):
@@ -46,15 +45,7 @@ class BugSerializer(serializers.ModelSerializer):
             else obj.assigned_to.username if obj.assigned_to else None
 
 
-class ReportBugSerializer(serializers.ModelSerializer):
+class BugDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bug
         fields = ('title', 'description')
-
-
-class UpdateBugSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(validators=[])
-
-    class Meta:
-        model = Bug
-        fields = ('id', 'title', 'description')

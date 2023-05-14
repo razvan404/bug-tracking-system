@@ -4,35 +4,26 @@ import { renderStatus, tableIcons } from "./Utils";
 import { Button, Card, CardContent, Collapse, Typography } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 
-export default function BugsListPage() {
+export default function BugsListPage({employee}) {
     const [bugs, setBugs] = useState([]);
-    const [employeeType, setEmployeeType] = useState('');
 
-    useEffect( () => {
-        (async () => {
-          await fetch('/api/get-employee')
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              setEmployeeType(data.type);
-            });
-        })();
-      }, []);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [successMsg, setSuccessMsg] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
 
     const loadBugs = () => {
-        fetch('/api/get-all-bugs')
+        fetch('/api/bugs')
             .then((response) => response.json())
             .then((data) => {
                 setBugs(data);
             });
     }
+
     useEffect(() => {
         loadBugs();
     }, []);
 
 
-    const [selectedRow, setSelectedRow] = useState(null);
     const getBugsTable = () => {
         const columns = [
             {title: 'ID', field: 'id', defaultSort: 'desc'},
@@ -65,10 +56,6 @@ export default function BugsListPage() {
             />
         );
     }
-
-
-    const [successMsg, setSuccessMsg] = useState('');
-    const [errorMsg, setErrorMsg] = useState('');
 
     const handleAssignBug = () => {
         fetch('/api/assign-bug', {
@@ -137,7 +124,7 @@ export default function BugsListPage() {
                               variant={'contained'}
                               color={'primary'}
                               onClick={handleAssignBug}
-                              disabled={employeeType !== 'programmer' || selectedRow.status !== 'unassigned'}
+                              disabled={employee.type !== 'programmer' || selectedRow.status !== 'unassigned'}
                           >
                               Assign this bug
                           </Button>
