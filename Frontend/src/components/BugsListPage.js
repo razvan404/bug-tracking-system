@@ -58,16 +58,15 @@ export default function BugsListPage({employee}) {
     }
 
     const handleAssignBug = () => {
-        fetch('/api/assign-bug', {
+        fetch(`/api/programmer-bugs/${selectedRow.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: selectedRow.id
+                status: 'assigned'
             })
-        })
-            .then((response) => {
+        }).then((response) => {
                 if (response.ok) {
                     response.json().then((data) => setSuccessMsg(data.msg));
                     loadBugs();

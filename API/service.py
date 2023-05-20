@@ -1,16 +1,28 @@
 from API.repositories import *
 
 
-class UnauthorizedException(Exception):
-    pass
+class ServiceException(Exception):
+    def __init__(self, message: str):
+        self.__message = message
+
+    @property
+    def message(self) -> str:
+        return self.__message
 
 
-class NotFoundException(Exception):
-    pass
+class UnauthorizedException(ServiceException):
+    def __init__(self, message: str = 'user unauthorized'):
+        super().__init__(message)
 
 
-class InvalidSyntaxException(Exception):
-    pass
+class NotFoundException(ServiceException):
+    def __init__(self, message: str = 'not found'):
+        super().__init__(message)
+
+
+class InvalidSyntaxException(ServiceException):
+    def __init__(self, message: str = 'invalid syntax'):
+        super().__init__(message)
 
 
 class Service:
@@ -26,7 +38,7 @@ class Service:
         elif session is not None:
             if employee_session := Service.employee_session_repository.find_by_session(session):
                 return employee_session.employee
-            raise NotFoundException()
+            raise NotFoundException('employee not found')
         else:
             raise InvalidSyntaxException()
 

@@ -8,7 +8,6 @@ urlpatterns = [
     path('bugs', BugsView.as_view()),
     path('tester-bugs', TesterBugsView.as_view()),
     path('tester-bugs/<int:bug_id>', TesterBugsView.as_view()),
-    path('get-programmer-bugs', GetProgrammerBugsView.as_view()),
-    path('mark-bug-as-fixed', MarkBugAsFixedView.as_view()),
-    path('mark-bug-as-unassigned', MarkBugAsUnassignedView.as_view()),
+    path('programmer-bugs', ProgrammerBugsView.as_view()),
+    path('programmer-bugs/<int:bug_id>', ProgrammerBugsView.as_view())
 ]

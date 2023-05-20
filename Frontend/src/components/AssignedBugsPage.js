@@ -10,7 +10,7 @@ export default function AssignedBugsPage() {
 
     const [bugs, setBugs] = useState([]);
     const loadBugs = () => {
-        fetch('/api/get-programmer-bugs')
+        fetch('/api/programmer-bugs')
             .then((response) => response.json())
             .then((data) => {
                 setBugs(data);
@@ -63,10 +63,10 @@ export default function AssignedBugsPage() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: selectedRow.id
+                    status: 'fixed'
                     })
                 }
-            fetch('/api/mark-bug-as-fixed', requestOptions)
+            fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setSuccessMsg(data.error));
@@ -87,10 +87,10 @@ export default function AssignedBugsPage() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: selectedRow.id
+                    status: 'unassigned'
                 })
             }
-            fetch('/api/mark-bug-as-unassigned', requestOptions)
+            fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         response.json().then((data) => setSuccessMsg(data.error));
