@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 
 from API.models import EmployeeSession
 from API.serializers import *
-from API.service import Service, UnauthorizedException, NotFoundException
+from API.service import SessionService, EmployeeService, UnauthorizedException, NotFoundException, BugService, \
+    BadRequestException
 
 
 class EmployeeCredentialsView(APIView):
@@ -17,10 +18,10 @@ class EmployeeCredentialsView(APIView):
         username = serializer.data.get('username')
         password = serializer.data.get('password')
         try:
-            employee = Service.find_employee(username=username, password=password)
+            employee = EmployeeService.find_employee(username=username, password=password)
             if not self.request.session.exists(self.request.session.session_key):
                 self.request.session.create()
-            Service.create_session(employee=employee, session=self.request.session.session_key)
+            SessionService.create_session(employee=employee, session=self.request.session.session_key)
             return Response({}, status=status.HTTP_200_OK)
         except NotFoundException as ex:
             return Response({'error': ex.message}, status=status.HTTP_404_NOT_FOUND)
@@ -30,7 +31,7 @@ class EmployeeCredentialsView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         try:
-            employee = Service.find_employee(session=self.request.session.session_key)
+            employee = EmployeeService.find_employee(session=self.request.session.session_key)
             serialized = EmployeeSerializer(employee)
             return Response(serialized.data, status=status.HTTP_200_OK)
         except NotFoundException as ex:
@@ -41,7 +42,7 @@ class EmployeeCredentialsView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         try:
-            Service.delete_session(session=self.request.session.session_key)
+            SessionService.delete_session(session=self.request.session.session_key)
             return Response({}, status=status.HTTP_200_OK)
         except NotFoundException as ex:
             return Response({'error': ex.message}, status=status.HTTP_404_NOT_FOUND)
@@ -52,13 +53,14 @@ class AdminEmployeesView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
         try:
-            employees = Service.find_all_employees(session=self.request.session.session_key)
+            employees = EmployeeService.find_all_employees(session=self.request.session.session_key)
             serialized = EmployeeSerializer(employees, many=True)
             return Response(serialized.data, status=status.HTTP_200_OK)
         except UnauthorizedException as ex:
             return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Create Employee
+
     def post(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
@@ -69,8 +71,8 @@ class AdminEmployeesView(APIView):
         password = serializer.data.get('password')
         employee_type = serializer.data.get('type')
         try:
-            Service.create_employee(session=self.request.session.session_key, employee_username=username,
-                                    employee_password=password, employee_type=employee_type)
+            EmployeeService.create_employee(session=self.request.session.session_key, employee_username=username,
+                                            employee_password=password, employee_type=employee_type)
             return Response({'msg': 'account created successfully'}, status=status.HTTP_201_CREATED)
         except UnauthorizedException as ex:
             return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
@@ -86,9 +88,9 @@ class AdminEmployeesView(APIView):
         password = serializer.data.get('password')
         employee_type = serializer.data.get('type')
         try:
-            Service.update_employee(session=self.request.session.session_key, employee_id=employee_id,
-                                    employee_username=username, employee_password=password,
-                                    employee_type=employee_type)
+            EmployeeService.update_employee(session=self.request.session.session_key, employee_id=employee_id,
+                                            employee_username=username, employee_password=password,
+                                            employee_type=employee_type)
             return Response({'msg': 'account updated successfully'}, status=status.HTTP_200_OK)
         except UnauthorizedException as ex:
             return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
@@ -101,7 +103,7 @@ class AdminEmployeesView(APIView):
         if not employee_id:
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            Service.delete_employee(session=self.request.session.session_key, employee_id=employee_id)
+            EmployeeService.delete_employee(session=self.request.session.session_key, employee_id=employee_id)
             return Response({'msg': 'account deleted successfully'}, status=status.HTTP_200_OK)
         except UnauthorizedException as ex:
             return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
@@ -113,126 +115,91 @@ class BugsView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists():
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        queryset = Bug.objects.all()
-        serialized = BugSerializer(queryset, many=True)
-        return Response(serialized.data, status=status.HTTP_200_OK)
+        try:
+            bugs = BugService.find_all_bugs(session=self.request.session.session_key)
+            serialized = BugSerializer(bugs, many=True)
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        except UnauthorizedException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class TesterBugsView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'tester':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        tester = queryset[0].employee
-        bugs = tester.reported_bugs.all()
-        serialized = BugSerializer(bugs, many=True)
-        return Response(serialized.data, status=status.HTTP_200_OK)
+        try:
+            bugs = BugService.find_all_tester_bugs(session=self.request.session.session_key)
+            serialized = BugSerializer(bugs, many=True)
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        except UnauthorizedException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
 
+    # add bug
     def post(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'tester':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        tester = queryset[0].employee
         serializer = BugDetailsSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         title = serializer.data.get('title')
         description = serializer.data.get('description')
-        bug = Bug(title=title, description=description, reporter=tester)
-        bug.save()
-        return Response({'msg': 'bug reported successfully'}, status=status.HTTP_201_CREATED)
+        try:
+            BugService.create_bug(session=self.request.session.session_key, title=title, description=description)
+            return Response({'msg': 'bug reported successfully'}, status=status.HTTP_201_CREATED)
+        except UnauthorizedException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
 
+    # update bug
     def patch(self, request, bug_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'tester':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = BugDetailsSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
         title = serializer.data.get('title')
         description = serializer.data.get('description')
-        queryset = Bug.objects.filter(id=bug_id)
-        if not queryset.exists():
-            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
-        bug = queryset[0]
-        if bug.status != 'unassigned':
-            return Response({'error': 'bug already assigned'}, status=status.HTTP_400_BAD_REQUEST)
-        bug.title = title
-        bug.description = description
-        bug.save(update_fields=['title', 'description'])
-        return Response({'msg': 'bug updated successfully'}, status=status.HTTP_200_OK)
+        try:
+            BugService.update_bug(session=self.request.session.session_key, bug_id=bug_id, title=title,
+                                  description=description)
+            return Response({'msg': 'bug updated successfully'}, status=status.HTTP_200_OK)
+        except NotFoundException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_404_NOT_FOUND)
+        except BadRequestException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
+    # delete bug
     def delete(self, request, bug_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'tester':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        queryset = Bug.objects.filter(id=bug_id)
-        if not queryset.exists():
-            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
-        bug = queryset[0]
-        if bug.status != 'unassigned':
-            return Response({'error': 'bug already assigned'}, status=status.HTTP_400_BAD_REQUEST)
-        bug.delete()
-        return Response({'msg': 'bug deleted successfully'}, status=status.HTTP_200_OK)
+        try:
+            BugService.delete_bug(session=self.request.session.session_key, bug_id=bug_id)
+            return Response({'msg': 'bug deleted successfully'}, status=status.HTTP_200_OK)
+        except NotFoundException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_404_NOT_FOUND)
+        except BadRequestException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProgrammerBugsView(APIView):
     def get(self, request):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'programmer':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        programmer = queryset[0].employee
-        bugs = programmer.bugs_to_solve.all()
-        serialized = BugSerializer(bugs, many=True)
-        return Response(serialized.data, status=status.HTTP_200_OK)
+        try:
+            bugs = BugService.find_all_programmer_bugs(session=self.request.session.session_key)
+            serialized = BugSerializer(bugs, many=True)
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        except UnauthorizedException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_401_UNAUTHORIZED)
 
     # mark a bug as assigned / unassigned / fixed
     def patch(self, request, bug_id: int):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        queryset = EmployeeSession.objects.filter(session=self.request.session.session_key)
-        if not queryset.exists() or queryset[0].employee.type != 'programmer':
-            return Response({'error': 'user unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        programmer = queryset[0].employee
-        queryset = Bug.objects.filter(id=bug_id)
-        if not queryset.exists():
-            return Response({'error': 'bug not found'}, status=status.HTTP_404_NOT_FOUND)
-        bug = queryset[0]
         status_ = request.data.get('status')
-        if not status_ or status_ not in ['unassigned', 'assigned', 'fixed']:
-            return Response({'error': 'invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-        if status_ == 'unassigned':
-            if bug.status != 'assigned':
-                return Response({'error': 'bug is not assigned'}, status=status.HTTP_400_BAD_REQUEST)
-            bug.status = 'unassigned'
-            bug.assigned_to = None
-            bug.save(update_fields=['status', 'assigned_to'])
-            return Response({'msg': 'bug marked as unassigned successfully'}, status=status.HTTP_200_OK)
-        elif status_ == 'assigned':
-            if bug.status != 'unassigned':
-                return Response({'error': 'bug already assigned'}, status=status.HTTP_400_BAD_REQUEST)
-            bug.status = 'assigned'
-            bug.assigned_to = programmer
-            bug.save(update_fields=['status', 'assigned_to'])
-            return Response({'msg': 'bug assigned successfully'}, status=status.HTTP_200_OK)
-        elif status_ == 'fixed':
-            if bug.status != 'assigned':
-                return Response({'error': 'bug is not assigned'}, status=status.HTTP_400_BAD_REQUEST)
-            bug.status = 'fixed'
-            bug.assigned_to = None
-            bug.solved_by = programmer
-            bug.save(update_fields=['status', 'assigned_to', 'solved_by'])
-            return Response({'msg': 'bug marked as fixed successfully'}, status=status.HTTP_200_OK)
+        try:
+            BugService.update_bug(session=self.request.session.session_key, bug_id=bug_id, status=status_)
+            return Response({'msg': 'bug status updated successfully'}, status=status.HTTP_200_OK)
+        except NotFoundException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_404_NOT_FOUND)
+        except BadRequestException as ex:
+            return Response({'error': ex.message}, status=status.HTTP_400_BAD_REQUEST)

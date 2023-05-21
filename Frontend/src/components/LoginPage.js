@@ -51,7 +51,7 @@ export default function LoginPage() {
         else {
             navigate('/', {replace: true});
         }
-      })
+      });
   }
 
   return (

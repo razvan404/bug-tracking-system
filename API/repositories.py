@@ -62,3 +62,26 @@ class EmployeeSessionRepository(Repository):
 
     def delete(self, employee_session: EmployeeSession) -> None:
         employee_session.delete()
+
+
+class BugRepository(Repository):
+    def __init__(self):
+        self.__objects = Bug.objects
+
+    def find_by_id(self, bug_id: int) -> Bug | None:
+        try:
+            return self.__objects.get(id=bug_id)
+        except Bug.DoesNotExist:
+            return None
+
+    def find_all(self) -> list:
+        return self.__objects.all()
+
+    def save(self, bug: Bug) -> None:
+        bug.save()
+
+    def update(self, bug: Bug) -> None:
+        bug.save(update_fields=['title', 'description', 'status', 'assigned_to', 'solved_by'])
+
+    def delete(self, bug: Bug) -> None:
+        bug.delete()
