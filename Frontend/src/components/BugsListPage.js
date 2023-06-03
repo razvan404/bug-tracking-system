@@ -58,6 +58,9 @@ export default function BugsListPage({employee}) {
     }
 
     const handleAssignBug = () => {
+        if (!confirm('Are you sure you want to assign this bug?')) {
+            return;
+        }
         fetch(`/api/programmer-bugs/${selectedRow.id}`, {
             method: 'PATCH',
             headers: {

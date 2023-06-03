@@ -56,51 +56,61 @@ export default function AssignedBugsPage() {
     }
 
     const handleMarkBugAsFixed = () => {
-        if (selectedRow !== null) {
-            const requestOptions = {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    status: 'fixed'
-                    })
-                }
-            fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
-                .then((response) => {
-                    if (!response.ok) {
-                        response.json().then((data) => setSuccessMsg(data.error));
-                    }
-                    else {
-                        response.json().then((data) => setSuccessMsg(data.msg));
-                        loadBugs();
-                    }
-                });
+        if (selectedRow === null) {
+            setErrorMsg('Please select a bug');
+            return;
         }
+        if (!confirm('Are you sure you want to mark this bug as fixed?')) {
+            return;
+        }
+        const requestOptions = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'fixed'
+                })
+            }
+        fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    response.json().then((data) => setSuccessMsg(data.error));
+                }
+                else {
+                    response.json().then((data) => setSuccessMsg(data.msg));
+                    loadBugs();
+                }
+            });
     }
 
     const handleMarkBugAsUnassigned = () => {
-        if (selectedRow !== null) {
-            const requestOptions = {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    status: 'unassigned'
-                })
-            }
-            fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
-                .then((response) => {
-                    if (!response.ok) {
-                        response.json().then((data) => setSuccessMsg(data.error));
-                    }
-                    else {
-                        response.json().then((data) => setSuccessMsg(data.msg));
-                        loadBugs();
-                    }
-                });
+        if (selectedRow === null) {
+            setErrorMsg('Please select a bug');
+            return;
         }
+        if (!confirm('Are you sure you want to mark this bug as unassigned?')) {
+            return;
+        }
+        const requestOptions = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'unassigned'
+            })
+        }
+        fetch(`/api/programmer-bugs/${selectedRow.id}`, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    response.json().then((data) => setSuccessMsg(data.error));
+                }
+                else {
+                    response.json().then((data) => setSuccessMsg(data.msg));
+                    loadBugs();
+                }
+            });
     }
 
     return ( <>

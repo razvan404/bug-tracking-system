@@ -85,31 +85,35 @@ export default function SubmittedBugsPage() {
     }
 
     const handleBugReport = () => {
-        if (validateInput()) {
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: title,
-                    description: description,
-                })
-            }
-            fetch('/api/tester-bugs', requestOptions)
-                .then((response) => {
-                    if (!response.ok) {
-                        response.json().then((data) => setErrorMsg(data.error));
-                    }
-                    else {
-                        response.json().then((data) => setSuccessMsg(data.msg));
-                        loadBugs();
-                        setSelectedRow(null);
-                        setTitle('');
-                        setDescription('');
-                    }
-                });
+        if (!validateInput()) {
+            return;
         }
+        if (!confirm('Are you sure you want to report this bug?')) {
+            return;
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+            })
+        }
+        fetch('/api/tester-bugs', requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    response.json().then((data) => setErrorMsg(data.error));
+                }
+                else {
+                    response.json().then((data) => setSuccessMsg(data.msg));
+                    loadBugs();
+                    setSelectedRow(null);
+                    setTitle('');
+                    setDescription('');
+                }
+            });
     }
 
     const handleBugUpdate = () => {
@@ -117,29 +121,33 @@ export default function SubmittedBugsPage() {
             setErrorMsg('Please select a bug to update');
             return;
         }
-        if (validateInput()) {
-            const requestOptions = {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: title,
-                    description: description,
-                })
-            }
-            fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
-                .then((response) => {
-                    if (!response.ok) {
-                        response.json().then((data) => setErrorMsg(data.error));
-                    }
-                    else {
-                        response.json().then((data) => setSuccessMsg(data.msg));
-                        loadBugs();
-                        setSelectedRow(null);
-                    }
-                });
+        if (!validateInput()) {
+            return;
         }
+        if (!confirm('Are you sure you want to update this bug?')) {
+            return;
+        }
+        const requestOptions = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+            })
+        }
+        fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    response.json().then((data) => setErrorMsg(data.error));
+                }
+                else {
+                    response.json().then((data) => setSuccessMsg(data.msg));
+                    loadBugs();
+                    setSelectedRow(null);
+                }
+            });
     }
 
     const handleBugRemove = () => {
@@ -147,25 +155,29 @@ export default function SubmittedBugsPage() {
             setErrorMsg('Please select a bug to remove');
             return;
         }
-        if (validateInput()) {
-            const requestOptions = {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }
-            fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
-                .then((response) => {
-                    if (!response.ok) {
-                        response.json().then((data) => setErrorMsg(data.error));
-                    }
-                    else {
-                        response.json().then((data) => setSuccessMsg(data.msg));
-                        loadBugs();
-                        setSelectedRow(null);
-                    }
-                });
+        if (!validateInput()) {
+            return;
         }
+        if (!confirm('Are you sure you want to remove this bug?')) {
+            return;
+        }
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        fetch(`/api/tester-bugs/${selectedRow.id}`, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    response.json().then((data) => setErrorMsg(data.error));
+                }
+                else {
+                    response.json().then((data) => setSuccessMsg(data.msg));
+                    loadBugs();
+                    setSelectedRow(null);
+                }
+            });
     }
 
     return ( <>
