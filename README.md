@@ -9,7 +9,7 @@ A software company provides its programmers and testers with a system through wh
 
 ## <em><strong>Functional Model</strong></em>
 
-<img src='Documentation/Functional%20Model/Use%20Cases%20Diagram.jpg' />
+<img src='Documentation/Functional%20Model/Use%20Cases%20Diagram.jpg' width='100%' />
 
 ### <strong>Employee</strong>
 
@@ -41,42 +41,42 @@ A software company provides its programmers and testers with a system through wh
 ## <em><strong>Concept Model</strong></em>
 
 #### <em>Model Class Diagram</em>
-<img src='Documentation/Concept%20Model/Model%20Class%20Diagram.jpg' />
+<img src='Documentation/Concept%20Model/Model%20Class%20Diagram.jpg' width='100%' />
 
 #### <em>Finished Class Diagram</em>
-<img src='Documentation/Concept%20Model/Finished%20Class%20Diagram.jpg' />
+<img src='Documentation/Concept%20Model/Finished%20Class%20Diagram.jpg' width='100%' />
 
 ## <em><strong>Database Diagram</strong></em>
 
-<img src='Documentation/Database%20Diagram/Database%20Diagram.jpg' />
+<img src='Documentation/Database%20Diagram/Database%20Diagram.jpg' width='100%' />
 
 ## <em><strong>Dynamic Model</strong></em>
 
 ### <strong>Employee Diagrams</strong>
 
 #### <em>Login Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Login%20Sequence%20Diagram%20-%20Normal%20Flow.jpg'>
+<img src='Documentation/Dynamic%20Model/Login%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Logout Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Logout%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Logout%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>View Bugs List Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/View%20Bugs%20List%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/View%20Bugs%20List%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 ### <strong>Administrator Diagrams</strong>
 
 #### <em>Manage Accounts Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Manage%20Accounts%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Manage%20Accounts%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 
 #### <em>Create Account Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Create%20Account%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Create%20Account%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Update Account Communication Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Update%20Account%20Communication%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Update%20Account%20Communication%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Delete Account Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Delete%20Account%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Delete%20Account%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 ### <strong>Tester Diagrams</strong>
 
@@ -84,28 +84,28 @@ A software company provides its programmers and testers with a system through wh
 <img src='Documentation/Dynamic%20Model/Manage%20Submitted%20Bugs%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
 
 #### <em>Report Bug Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Report%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Report%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Update Bug Communication Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Update%20Bug%20Communication%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Update%20Bug%20Communication%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Remove Bug Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Remove%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Remove%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 ### <strong>Programmer Diagrams</strong>
 
 #### <em>Manage Assigned Bugs Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Manage%20Assigned%20Bugs%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Manage%20Assigned%20Bugs%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Assign Bug Sequence Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Assign%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Assign%20Bug%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Mark Bug as Unassigned Communication Diagram - Normal Flow</em>
-<img src='Documentation/Dynamic%20Model/Mark%20Bug%20as%20Unassigned%20Communication%20Diagram%20-%20Normal%20Flow.jpg' />
+<img src='Documentation/Dynamic%20Model/Mark%20Bug%20as%20Unassigned%20Communication%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 #### <em>Mark Bug as Fixed Sequence Diagram - Normal Flow</em>
 
-<img src='Documentation/Dynamic%20Model/Mark%20Bug%20as%20Fixed%20Sequence%20Diagram%20-%20Normal%20Flow.jpg'>
+<img src='Documentation/Dynamic%20Model/Mark%20Bug%20as%20Fixed%20Sequence%20Diagram%20-%20Normal%20Flow.jpg' width='100%' />
 
 ## <em><strong>Technical Documentation</strong></em>
 
@@ -127,15 +127,15 @@ A software company provides its programmers and testers with a system through wh
 
 Once the user opens the application, they must introduce their username and password, then press the login button. If the login will not be successful, an error message will pop up, otherwise the user will be redirected to the main page.
 
-<img src='Documentation/Help/help1.jpg' />
+<img src='Documentation/Help/help1.jpg' width='100%' />
 
 Any user will have the option to view the list of bugs (they need to select the option on the left navigation bar if they are in another page), if any bug is selected, some details about it will be shown below the table, if the user is also a programmer and the bug is not assigned yet, an option to assign the bug will be available. The other option each user has is the log out button, and when that’s pressed, the user will be logged out of the application and redirected to the login page.
 
-<img src='Documentation/Help/help2.jpg' />
+<img src='Documentation/Help/help2.jpg' width='100%' />
 
 The administrators will see the Manage Accounts button, when they press it, they will be redirected to a page with all the accounts registered in the system, they have the options to create a new account, to update and to delete an existing one. The update and the delete option will be available only when an account is selected, the create account will be available all times, and if one of them is pressed and the operation fails, an error message will pop up, otherwise a success message will be shown.
 
-<img src='Documentation/Help/help3.jpg' />
+<img src='Documentation/Help/help3.jpg' width='100%' />
 
 The tester will see the Submitted Bugs button, when they press it, they will be redirected to a page with all their submitted bugs. There, they can report a bug by entering its title and its description, to update a bug and to delete a bug. The update and the delete operations can be done only on unassigned bugs, if the bug is already assigned, those options will be disabled. When one of the buttons is pressed and the operation fails, an error message will pop up, otherwise a success message will be shown.
 
